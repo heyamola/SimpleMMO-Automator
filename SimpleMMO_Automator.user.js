@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         SimpleMMO Automator
 // @namespace    http://tampermonkey.net/
-// @updateURL    https://raw.githubusercontent.com/YourUsername/YourRepo/main/SimpleMMO_Automator.user.js
-// @downloadURL  https://raw.githubusercontent.com/YourUsername/YourRepo/main/SimpleMMO_Automator.user.js
 // @version      1.1
 // @description  Automate travel, attack, and gather actions in SimpleMMO
 // @author       You
 // @match        https://web.simple-mmo.com/*
+// @updateURL    https://raw.githubusercontent.com/heyamola/SimpleMMO-Automator/master/SimpleMMO_Automator.user.js
+// @downloadURL  https://raw.githubusercontent.com/heyamola/SimpleMMO-Automator/master/SimpleMMO_Automator.user.js
 // @grant        none
 // ==/UserScript==
 
