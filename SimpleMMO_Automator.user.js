@@ -1,22 +1,45 @@
 // ==UserScript==
 // @name         SimpleMMO Automator
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  Automate travel, attack, and gather actions in SimpleMMO
 // @author       You
 // @match        https://web.simple-mmo.com/*
 // @updateURL    https://raw.githubusercontent.com/heyamola/SimpleMMO-Automator/master/SimpleMMO_Automator.user.js
 // @downloadURL  https://raw.githubusercontent.com/heyamola/SimpleMMO-Automator/master/SimpleMMO_Automator.user.js
-// @grant        none
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_registerMenuCommand
 // ==/UserScript==
 
-(function () {
+(function() {
     'use strict';
 
     // --- USER CONFIGURATION ---
-    const TURN_INTERVAL = 1500;
+    // Loads configurations from the Tampermonkey storage, with default fallbacks
+    let isRunning = GM_getValue('SMO_IS_RUNNING', true);
+    let TURN_INTERVAL = GM_getValue('SMO_TURN_INTERVAL', 1500);
+    
+    // Internal randomization constants
     const RANDOM_SLEEP_MIN = 250;
     const RANDOM_SLEEP_MAX = 750;
+
+    // --- TAMPERMONKEY MENU COMMANDS ---
+    GM_registerMenuCommand(`Toggle Bot (Currently: ${isRunning ? 'ON' : 'OFF'})`, () => {
+        isRunning = !isRunning;
+        GM_setValue('SMO_IS_RUNNING', isRunning);
+        alert(`SimpleMMO Automator is now ${isRunning ? 'ON' : 'OFF'}.`);
+        location.reload();
+    });
+
+    GM_registerMenuCommand(`Set Turn Interval (Current: ${TURN_INTERVAL}ms)`, () => {
+        const val = prompt("Enter new turn interval in milliseconds:", TURN_INTERVAL);
+        if (val !== null && !isNaN(val)) {
+            TURN_INTERVAL = parseInt(val, 10);
+            GM_setValue('SMO_TURN_INTERVAL', TURN_INTERVAL);
+            location.reload();
+        }
+    });
 
     /* =============================
        UTILITY
@@ -114,6 +137,9 @@
     ============================= */
 
     async function turn() {
+        // Stop execution if the user turned the bot off via the GM menu
+        if (!isRunning) return;
+
         const path = window.location.pathname;
 
         // Add a random delay to seem more human-like before each action calculation
@@ -137,7 +163,7 @@
 
         // 2. Travel Page Logic (/travel)
         if (path.includes('/travel')) {
-
+            
             // PRIORITY 1: Check travel attack popups
             const travelAttackBtn = findTravelAttackButton();
             if (travelAttackBtn) {
